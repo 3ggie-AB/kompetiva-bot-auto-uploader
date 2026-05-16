@@ -11,6 +11,8 @@ class DitekindoBot {
   constructor() {
     this.browser = null;
     this.page = null;
+    this.cookies = null;
+    this.authToken = null;
     this.outputDir = path.join(__dirname, 'output');
     this.downloadDir = path.join(this.outputDir, 'downloads');
     this.config = {
@@ -352,8 +354,8 @@ class DitekindoBot {
     const id = encodeURIComponent(submissionId);
     const configuredPath = this.config.attachmentUploadPath.trim();
     const defaultPaths = [
-      '/api/submissions/:id/attachment',
-      '/api/submission/:id/attachment'
+      '/api/apl/submissions/:id/attachment',
+      '/api/apl/submission/:id/attachment'
     ];
 
     const paths = configuredPath ? [configuredPath] : defaultPaths;
@@ -378,6 +380,10 @@ class DitekindoBot {
       'Accept': 'application/json',
       'X-SECRET-BOT': this.config.secretBot
     };
+
+    if (this.authToken) {
+      headers['Authorization'] = `Bearer ${this.authToken}`;
+    }
 
     if (this.cookies && this.cookies.length > 0) {
       headers.Cookie = this.cookies
@@ -691,6 +697,26 @@ class DitekindoBot {
       const cookies = await this.page.cookies();
       this.cookies = cookies;
       console.log(`🍪 Berhasil mengambil ${cookies.length} cookies`);
+
+      // Ambil token dari localStorage (jwt token)
+      try {
+        this.authToken = await this.page.evaluate(() => {
+          return localStorage.getItem('token')
+            || localStorage.getItem('access_token')
+            || localStorage.getItem('jwt')
+            || sessionStorage.getItem('token')
+            || sessionStorage.getItem('access_token')
+            || '';
+        });
+        if (this.authToken) {
+          console.log('🔑 Token autentikasi berhasil diambil dari localStorage');
+        } else {
+          console.log('⚠️ Token tidak ditemukan di localStorage, cek cookie mungkin token ada di cookie');
+        }
+      } catch (e) {
+        console.log('⚠️ Gagal mengambil token dari localStorage:', e.message);
+        this.authToken = '';
+      }
 
       console.log('✅ Login berhasil!\n');
       return true;
