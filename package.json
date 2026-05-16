@@ -1,0 +1,26 @@
+{
+  "name": "kompetiva-bot",
+  "version": "1.0.0",
+  "description": "Bot untuk akses kompetiva",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js",
+    "dev": "node bot.js"
+  },
+  "keywords": ["bot", "chromium", "puppeteer", "automation"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "form-data": "^4.0.5",
+    "node-fetch": "^2.7.0",
+    "puppeteer": "^22.0.0"
+  },
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
